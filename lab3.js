@@ -13,7 +13,8 @@
  * @type {object} airlineRouteApp
  */
 var airlineRouteApp = airlineRouteApp || {};
-
+var routes = document.getElementById('routes');
+var cities = document.getElementById('cities');
 /**
  * Indicates which cities have a direct flight between them.
  * A key has a direct flight to each of the cities in the array
@@ -43,6 +44,39 @@ airlineRouteApp.elementHasClass = function(element, cls) {
 };
 
 /**
+ * Checks if there are any duplicates in the give element 
+ * that have the same key value pair
+ *
+ * @param {object} element
+ * @param {string} key
+ * @param {string} value
+ */
+airlineRouteApp.checkDuplicate = function(element, key, value) {
+
+  for (let i = 0; i < element.childNodes.length; i++) {
+      if (airlineRouteApp.elementHasClass(element.childNodes[i], key) 
+          && airlineRouteApp.elementHasClass(element.childNodes[i], value)) {
+          return true;
+      }
+  }
+  return false;
+};
+
+/**
+ * Checks which route matches the city whose button is clicked on
+ */
+airlineRouteApp.checkRoutes = function() {
+
+    for (let i = 0; i < routes.childNodes.length; i++) {
+        if (airlineRouteApp.elementHasClass(routes.childNodes[i], this.id)) {
+            routes.childNodes[i].style.color = "red";
+        }else{
+            routes.childNodes[i].style.color = "black";
+        }       
+    }
+};
+
+/**
  * Create a paragraph element for each route in the routes object.
  * The text of the element will be "SRC <=> DEST" where SRC is is one of
  * the keys in routes, and DEST is in the array of cities.
@@ -52,19 +86,20 @@ airlineRouteApp.elementHasClass = function(element, cls) {
  */
 airlineRouteApp.buildRoutes = function() {
 
-    var routes = document.getElementById('routes');
-
-    for (var key in airlineRouteApp.ROUTES){
-        for (var i = 0; i < airlineRouteApp.ROUTES[key].length; i++) {
-
-            var routenode = document.createElement("p");
-            var node = document.createTextNode(key + " <=> " + airlineRouteApp.ROUTES[key][i]);
-            routenode.appendChild(node);
-            routenode.setAttribute("class", key);
-            routenode.className += "airlineRouteApp.ROUTES[key][i])";
-            routes.appendChild(routenode);
+    for (let key in airlineRouteApp.ROUTES){
+        for (let i = 0; i < airlineRouteApp.ROUTES[key].length; i++) {
+            if (!airlineRouteApp.checkDuplicate(routes, key, airlineRouteApp.ROUTES[key][i])) {
+                let routenode = document.createElement("p");
+                let node = document.createTextNode(key + " <=> " + airlineRouteApp.ROUTES[key][i]);
+                routenode.appendChild(node);
+                routenode.setAttribute("class", key);
+                routenode.className += " " + airlineRouteApp.ROUTES[key][i];
+                routes.appendChild(routenode);
+            }
         }
     }
+
+
 };
 
 /**
@@ -77,13 +112,15 @@ airlineRouteApp.buildRoutes = function() {
  * will be coloured red. All other routes will be black.
  */
 airlineRouteApp.buildCities = function() {
-    var cities = document.getElementById('cities');
 
-    for (var key in airlineRouteApp.ROUTES){
-      var buttonnode= document.createElement('input');
+    for (let key in airlineRouteApp.ROUTES){
+      let buttonnode= document.createElement('input');
       buttonnode.setAttribute('type','button');
       buttonnode.setAttribute('name', key);
       buttonnode.setAttribute('value', key);
+      buttonnode.id = key;
+      // buttonnode.onclick = function() {airlineRouteApp.checkRoutes()};
+      buttonnode.addEventListener("click", airlineRouteApp.checkRoutes);
       cities.appendChild(buttonnode);
     }
 };
