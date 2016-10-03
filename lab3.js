@@ -51,7 +51,20 @@ airlineRouteApp.elementHasClass = function(element, cls) {
  * page: "YYZ <=> YVR" xor "YVR <=> YYZ".
  */
 airlineRouteApp.buildRoutes = function() {
-  // TODO
+
+    var routes = document.getElementById('routes');
+
+    for (var key in airlineRouteApp.ROUTES){
+        for (var i = 0; i < airlineRouteApp.ROUTES[key].length; i++) {
+
+            var routenode = document.createElement("p");
+            var node = document.createTextNode(key + " <=> " + airlineRouteApp.ROUTES[key][i]);
+            routenode.appendChild(node);
+            routenode.setAttribute("class", key);
+            routenode.className += "airlineRouteApp.ROUTES[key][i])";
+            routes.appendChild(routenode);
+        }
+    }
 };
 
 /**
@@ -64,7 +77,15 @@ airlineRouteApp.buildRoutes = function() {
  * will be coloured red. All other routes will be black.
  */
 airlineRouteApp.buildCities = function() {
-  // TODO
+    var cities = document.getElementById('cities');
+
+    for (var key in airlineRouteApp.ROUTES){
+      var buttonnode= document.createElement('input');
+      buttonnode.setAttribute('type','button');
+      buttonnode.setAttribute('name', key);
+      buttonnode.setAttribute('value', key);
+      cities.appendChild(buttonnode);
+    }
 };
 
 /**
